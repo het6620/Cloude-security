@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="topic-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">☁ Topics</div>
+    <nav id="sidebar-nav"><!-- filled by JS --></nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="topic-main">
+    <div id="topic-header" class="topic-header"><!-- filled by JS --></div>
+    <div id="topic-content" class="topic-content"><!-- filled by JS --></div>
+
+    <!-- Quiz Section -->
+    <div id="quiz-section" class="quiz-section" style="display:none">
+      <div class="quiz-header">
+        <h2>📝 Knowledge Check</h2>
+        <div class="quiz-meta">
+          <span id="quiz-score-display"></span>
+        </div>
+      </div>
+      <div id="quiz-questions"></div>
+      <div id="quiz-result-banner" class="quiz-result-banner" style="display:none"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Content Data -->
+<script>
+const CURRENT_SLUG = "{{ slug }}";
+
+const TOPIC_CONTENT = {
+"what-is-cloud": {
+  title: "What is Cloud Computing?",
+  icon: "☁",
+  color: "#1E90FF",
+  intro: "Cloud computing is the delivery of computing services—including servers, storage, databases, networking, software, analytics, and intelligence—over the internet ('the cloud') to offer faster innovation, flexible resources, and economies of scale.",
+  sections: [
+    {
+      heading: "The Simple Definition",
+      body: `Cloud computing means storing and accessing data and programs over the internet instead of your computer's hard drive. Think of it like electricity — you don't build your own power plant; you simply plug in and use power from the grid. Cloud computing works the same way with computing resources.<br><br>Instead of buying and maintaining physical data centers and servers, you can access technology services — such as computing power, storage, and databases — on an as-needed basis from a cloud provider.`
+    },
+    {
+      heading: "5 Key Characteristics (NIST)",
+      body: `<ul class='content-list'>
+        <li><strong>On-demand self-service:</strong> Provision computing capabilities (like server time and network storage) automatically without requiring human interaction.</li>
+        <li><strong>Broad network access:</strong> Capabilities are available over the network and accessed through standard mechanisms (smartphones, tablets, laptops).</li>
+        <li><strong>Resource pooling:</strong> Provider's computing resources are pooled to serve multiple consumers using a multi-tenant model.</li>
+        <li><strong>Rapid elasticity:</strong> Capabilities can be elastically provisioned and released, in some cases automatically, to scale rapidly.</li>
+        <li><strong>Measured service:</strong> Cloud systems automatically control and optimize resource use — you pay for what you consume.</li>
+      </ul>`
+    },
+    {
+      heading: "Real-World Examples",
+      body: `<div class='example-grid'>
+        <div class='example-item'><span class='ex-icon'>📧</span><strong>Gmail</strong><br>Your emails stored in Google's cloud</div>
+        <div class='example-item'><span class='ex-icon'>🎵</span><strong>Spotify</strong><br>Music streamed from cloud servers</div>
+        <div class='example-item'><span class='ex-icon'>📁</span><strong>Google Drive</strong><br>Files stored and synced in cloud</div>
+        <div class='example-item'><span class='ex-icon'>🎬</span><strong>Netflix</strong><br>Video content delivered via AWS</div>
+      </div>`
+    },
+    {
+      heading: "Benefits of Cloud Computing",
+      body: `<ul class='content-list benefit-list'>
+        <li>💰 <strong>Cost Savings:</strong> Convert large capital expenses to smaller operational expenses</li>
+        <li>⚡ <strong>Speed:</strong> Most services are self-service and on-demand — provision vast computing resources in minutes</li>
+        <li>🌍 <strong>Global Scale:</strong> Deliver the right amount of IT resources from the right geographic location</li>
+        <li>🔧 <strong>Productivity:</strong> Remove the need for hardware setup, software patching, and other time-consuming IT management tasks</li>
+        <li>🛡️ <strong>Security:</strong> Major cloud providers offer broad set of policies, technologies, and controls to strengthen your security posture</li>
+        <li>📈 <strong>Reliability:</strong> Data backup, disaster recovery, and business continuity easier and less expensive</li>
+      </ul>`
+    }
+  ]
+},
+"cloud-history": {
+  title: "History of Cloud Computing",
+  icon: "📅",
+  color: "#4169E1",
+  intro: "Cloud computing didn't appear overnight. It evolved over decades of technological innovation, from early mainframe computing concepts to today's trillion-dollar cloud industry.",
+  sections: [
+    { heading: "1950s–1960s: The Seeds", body: "In the 1950s, large-scale mainframe computers became available in academia and corporations. Since these were expensive, organizations would allow multiple users to share access to one mainframe through 'time-sharing'. John McCarthy proposed in 1961 that computing could be organized as a public utility — the earliest conceptual foundation of cloud." },
+    { heading: "1969–1990s: ARPANet & Virtualization", body: "Joseph Licklider's work on ARPANET (predecessor to the internet) in 1969 was crucial — he dreamed of an 'Intergalactic Computer Network'. In the 1970s, IBM created virtual machines allowing multiple operating systems to run on a single physical machine. In the 1990s, telecom companies began offering virtualized private network connections, optimizing bandwidth." },
+    { heading: "1999–2006: The SaaS Revolution", body: "Salesforce launched in 1999 as one of the first companies to deliver enterprise applications via the internet — pioneering SaaS. Amazon Web Services (AWS) launched in 2006 with S3 (storage) and EC2 (compute), fundamentally changing how businesses use IT infrastructure." },
+    { heading: "2008–2015: The Cloud Wars Begin", body: "Google App Engine launched in 2008. Microsoft Azure launched in 2010. The cloud market exploded as businesses realized they could eliminate costly on-premises infrastructure. Docker (2013) and Kubernetes (2014) further revolutionized cloud with containers and orchestration." },
+    { heading: "2015–Present: Cloud-Native Era", body: "Today, cloud is the default for new applications. Multi-cloud and hybrid strategies are mainstream. Serverless computing, AI/ML services, and edge computing extend the cloud further. Global cloud market exceeds $600 billion annually and is growing rapidly." }
+  ]
+},
+"cloud-models": {
+  title: "Cloud Service Models",
+  icon: "📐",
+  color: "#0080FF",
+  intro: "Cloud services come in three primary models — IaaS, PaaS, and SaaS — each offering a different level of control, flexibility, and management. Understanding these is fundamental to cloud computing.",
+  sections: [
+    { heading: "IaaS — Infrastructure as a Service", body: `<p>IaaS provides the fundamental compute, network, and storage resources on demand. You rent virtualized hardware from the cloud provider.</p><ul class='content-list'><li>✅ Provider manages: Physical hardware, networking, virtualization</li><li>✅ You manage: OS, middleware, runtime, applications, data</li><li>📌 Examples: AWS EC2, Azure Virtual Machines, Google Compute Engine</li><li>🎯 Best for: Developers needing maximum control, migrating existing apps</li></ul>` },
+    { heading: "PaaS — Platform as a Service", body: `<p>PaaS provides a complete development and deployment environment in the cloud. You focus on building applications without managing the underlying infrastructure.</p><ul class='content-list'><li>✅ Provider manages: Hardware, OS, middleware, runtime</li><li>✅ You manage: Applications and data only</li><li>📌 Examples: AWS Elastic Beanstalk, Azure App Service, Google App Engine, Heroku</li><li>🎯 Best for: Developers who want to focus purely on code</li></ul>` },
+    { heading: "SaaS — Software as a Service", body: `<p>SaaS delivers complete software applications over the internet. The provider manages everything — you just use the application.</p><ul class='content-list'><li>✅ Provider manages: Everything (hardware through application)</li><li>✅ You manage: Your data and user access only</li><li>📌 Examples: Gmail, Microsoft 365, Salesforce, Zoom, Slack</li><li>🎯 Best for: End users needing ready-to-use software</li></ul>` },
+    { heading: "Newer Models", body: `<ul class='content-list'><li><strong>FaaS (Function as a Service) / Serverless:</strong> Run individual functions without managing servers. AWS Lambda, Azure Functions, Google Cloud Functions.</li><li><strong>DBaaS (Database as a Service):</strong> Managed database services. AWS RDS, Azure SQL Database.</li><li><strong>CaaS (Container as a Service):</strong> Deploy and manage containers. AWS ECS, Google GKE, Azure AKS.</li><li><strong>SECaaS (Security as a Service):</strong> Cloud-delivered security services. Cloudflare, Zscaler.</li></ul>` },
+    { heading: "Shared Responsibility Model", body: `The shared responsibility model defines who is responsible for what:<br><br><div class='responsibility-table'><div class='rt-row header'><div>Responsibility</div><div>IaaS</div><div>PaaS</div><div>SaaS</div></div><div class='rt-row'><div>Data & Access</div><div class='cust'>Customer</div><div class='cust'>Customer</div><div class='cust'>Customer</div></div><div class='rt-row'><div>Application</div><div class='cust'>Customer</div><div class='cust'>Customer</div><div class='prov'>Provider</div></div><div class='rt-row'><div>Runtime/OS</div><div class='cust'>Customer</div><div class='prov'>Provider</div><div class='prov'>Provider</div></div><div class='rt-row'><div>Infrastructure</div><div class='prov'>Provider</div><div class='prov'>Provider</div><div class='prov'>Provider</div></div></div>` }
+  ]
+},
+"cloud-types": {
+  title: "Types of Cloud Deployment",
+  icon: "🏗",
+  color: "#1565C0",
+  intro: "Beyond service models, cloud computing is deployed in different ways depending on an organization's needs for control, cost, and compliance.",
+  sections: [
+    { heading: "Public Cloud", body: `<p>Public cloud resources are owned and operated by a third-party cloud provider and delivered over the internet. Resources are shared among multiple customers (multi-tenant).</p><ul class='content-list'><li>✅ Advantages: Low cost, no maintenance, near-unlimited scalability</li><li>⚠️ Considerations: Less control, shared infrastructure, data sovereignty concerns</li><li>📌 Examples: AWS, Microsoft Azure, Google Cloud Platform</li></ul>` },
+    { heading: "Private Cloud", body: `<p>A private cloud is used exclusively by a single organization. It can be physically located at the organization's on-site data center or hosted by a third-party provider.</p><ul class='content-list'><li>✅ Advantages: More control, better security, compliance-friendly</li><li>⚠️ Considerations: Higher cost, requires IT staff to manage</li><li>📌 Examples: VMware vSphere, OpenStack, Azure Stack</li></ul>` },
+    { heading: "Hybrid Cloud", body: `<p>Hybrid cloud combines public and private clouds, allowing data and applications to move between them. This gives businesses greater flexibility and more deployment options.</p><ul class='content-list'><li>✅ Advantages: Flexibility, cost optimization, keep sensitive data on-prem</li><li>⚠️ Considerations: Complex to manage, integration challenges</li><li>📌 Examples: Most enterprise organizations use hybrid approach</li></ul>` },
+    { heading: "Multi-Cloud", body: `<p>Multi-cloud uses services from multiple cloud providers simultaneously, avoiding vendor lock-in and leveraging the best services from each provider.</p><ul class='content-list'><li>✅ Advantages: Avoid vendor lock-in, best-of-breed services, redundancy</li><li>⚠️ Considerations: Increased complexity, multiple billing, skills needed</li><li>📌 Strategy: 92% of enterprises have a multi-cloud strategy</li></ul>` },
+    { heading: "Community Cloud", body: `<p>A community cloud is shared by several organizations with common concerns (security, compliance, jurisdiction). Managed by organizations or a third party.</p><ul class='content-list'><li>📌 Examples: Government agencies sharing infrastructure, healthcare consortiums</li><li>✅ Good for: Organizations with similar regulatory requirements</li></ul>` }
+  ]
+},
+"cloud-providers": {
+  title: "Major Cloud Providers",
+  icon: "🏢",
+  color: "#2979FF",
+  intro: "Three major players dominate the cloud market — AWS, Azure, and GCP. Understanding their offerings is essential for any cloud professional.",
+  sections: [
+    { heading: "Amazon Web Services (AWS)", body: `<p>Launched in 2006, AWS is the world's most comprehensive and broadly adopted cloud platform with over 33% market share.</p><ul class='content-list'><li>🔑 Key Services: EC2 (compute), S3 (storage), RDS (database), Lambda (serverless), VPC (networking), IAM (identity)</li><li>🛡 Security: AWS Shield, GuardDuty, Security Hub, Inspector, WAF</li><li>🎓 Certifications: AWS Cloud Practitioner, Solutions Architect, Security Specialty</li><li>🌍 Regions: 30+ geographic regions globally</li></ul>` },
+    { heading: "Microsoft Azure", body: `<p>Azure holds ~22% market share and is the preferred cloud for enterprises already using Microsoft products like Office 365 and Windows Server.</p><ul class='content-list'><li>🔑 Key Services: Azure VMs, Blob Storage, Azure SQL, Azure Functions, AKS (Kubernetes)</li><li>🛡 Security: Microsoft Defender for Cloud, Azure Sentinel (SIEM), Azure AD</li><li>🎓 Certifications: AZ-900 (fundamentals), AZ-500 (Security), AZ-104 (Administrator)</li><li>🏢 Strength: Enterprise integration, hybrid cloud (Azure Arc), AI services</li></ul>` },
+    { heading: "Google Cloud Platform (GCP)", body: `<p>GCP holds ~11% market share and excels in data analytics, AI/ML, and container technologies (Google invented Kubernetes).</p><ul class='content-list'><li>🔑 Key Services: Compute Engine, Cloud Storage, BigQuery, GKE, Cloud Functions</li><li>🛡 Security: Security Command Center, Chronicle, BeyondCorp Zero Trust</li><li>🎓 Certifications: Cloud Digital Leader, Associate Cloud Engineer, Professional Security Engineer</li><li>🤖 Strength: AI/ML (Vertex AI, TensorFlow), data analytics, Kubernetes</li></ul>` },
+    { heading: "Other Providers", body: `<ul class='content-list'><li><strong>IBM Cloud:</strong> Strong in enterprise and hybrid cloud with OpenShift</li><li><strong>Oracle Cloud:</strong> Known for databases and ERP cloud solutions</li><li><strong>Alibaba Cloud:</strong> Dominant in Asia-Pacific market</li><li><strong>Cloudflare:</strong> Security-focused cloud services, CDN, Zero Trust</li><li><strong>DigitalOcean:</strong> Developer-friendly, simpler pricing for startups</li></ul>` }
+  ]
+},
+"cloud-security": {
+  title: "Cloud Security Overview",
+  icon: "🛡",
+  color: "#0D47A1",
+  intro: "Cloud security is a discipline of cybersecurity dedicated to securing cloud computing systems. It includes keeping data private and safe across online-based infrastructure, applications, and platforms.",
+  sections: [
+    { heading: "What is Cloud Security?", body: `Cloud security encompasses the technologies, policies, controls, and services that protect cloud data, applications, and infrastructure from threats.<br><br>Unlike traditional on-premises security, cloud security operates in shared infrastructure where the cloud provider and customer share security responsibilities.` },
+    { heading: "The CIA Triad", body: `The foundation of information security in cloud:<div class='cia-grid'><div class='cia-card'><div class='cia-icon'>🔒</div><strong>Confidentiality</strong><p>Ensuring data is accessible only to those authorized to access it. Achieved through encryption, access controls, and authentication.</p></div><div class='cia-card'><div class='cia-icon'>✅</div><strong>Integrity</strong><p>Ensuring data is accurate and has not been tampered with. Achieved through checksums, digital signatures, and audit logs.</p></div><div class='cia-card'><div class='cia-icon'>⚡</div><strong>Availability</strong><p>Ensuring data and services are accessible when needed. Achieved through redundancy, failover, and DDoS protection.</p></div></div>` },
+    { heading: "Shared Responsibility in Security", body: `In cloud security, responsibilities are divided:<ul class='content-list'><li><strong>Provider is responsible for:</strong> Security OF the cloud — physical security, hardware, network infrastructure, hypervisor</li><li><strong>Customer is responsible for:</strong> Security IN the cloud — data, applications, identity management, OS configuration, network controls</li></ul>Many breaches occur because customers assume the provider handles everything. <strong>You must secure your side!</strong>` },
+    { heading: "Zero Trust Security", body: `Zero Trust is a modern security model based on the principle of "Never Trust, Always Verify":<ul class='content-list'><li>🔍 Verify every user and device, regardless of location</li><li>🔐 Apply least-privilege access — give minimum necessary permissions</li><li>📊 Log and monitor all network traffic, even internal</li><li>🛡 Assume breach — design systems as if attackers are already inside</li></ul>Zero Trust is especially important in cloud where the traditional network perimeter no longer exists.` }
+  ]
+},
+"cloud-security-principles": {
+  title: "Cloud Security Principles",
+  icon: "📋",
+  color: "#1A237E",
+  intro: "A strong cloud security posture is built on fundamental principles. These principles guide how organizations design, implement, and maintain secure cloud environments.",
+  sections: [
+    { heading: "Principle of Least Privilege (PoLP)", body: `Every user, application, and system should have only the minimum permissions needed to perform their function — nothing more.<br><br><strong>In practice:</strong><ul class='content-list'><li>Create IAM roles with specific, limited permissions</li><li>Avoid using root/admin accounts for daily operations</li><li>Regularly review and revoke unnecessary permissions</li><li>Use service accounts with scoped permissions for applications</li></ul>` },
+    { heading: "Defense in Depth", body: `Apply multiple layers of security controls so if one fails, others are still in place.<ul class='content-list'><li>🌐 Network layer: VPCs, security groups, NACLs</li><li>🔐 Identity layer: MFA, IAM policies, SSO</li><li>💾 Data layer: Encryption at rest and in transit</li><li>📱 Application layer: WAF, input validation, secure coding</li><li>📊 Monitoring layer: SIEM, logging, alerting</li></ul>` },
+    { heading: "Identity and Access Management (IAM)", body: `IAM is the cornerstone of cloud security. It defines who can do what, where.<ul class='content-list'><li><strong>Authentication:</strong> Verifying who you are (username/password, MFA, certificates)</li><li><strong>Authorization:</strong> What you're allowed to do (IAM policies, RBAC)</li><li><strong>Multi-Factor Authentication (MFA):</strong> Require two or more factors — something you know (password), something you have (phone), something you are (biometrics)</li><li><strong>Single Sign-On (SSO):</strong> One login for multiple services, reducing password fatigue</li></ul>` },
+    { heading: "Encryption", body: `Data must be encrypted to protect confidentiality:<ul class='content-list'><li>🔒 <strong>Encryption at Rest:</strong> Data encrypted when stored on disk (AES-256)</li><li>🔒 <strong>Encryption in Transit:</strong> Data encrypted during transmission (TLS 1.3)</li><li>🔒 <strong>Encryption in Use:</strong> Data encrypted while being processed (Homomorphic encryption — emerging)</li><li>🔑 <strong>Key Management:</strong> Secure management of encryption keys using services like AWS KMS, Azure Key Vault, HashiCorp Vault</li></ul>` },
+    { heading: "Security by Design", body: `Security is not an afterthought — it must be embedded from the beginning of system design:<ul class='content-list'><li>🏗 Threat modeling during architecture design</li><li>🔍 Security code reviews and static analysis (SAST)</li><li>🧪 Security testing (penetration testing, vulnerability scanning)</li><li>📝 Security requirements defined before development starts</li><li>🔄 DevSecOps — integrating security into CI/CD pipelines</li></ul>` }
+  ]
+},
+"cloud-security-threats": {
+  title: "Cloud Security Threats",
+  icon: "⚠️",
+  color: "#B71C1C",
+  intro: "Understanding common cloud security threats is essential for defending against them. Cloud environments face unique threats that differ from traditional on-premises environments.",
+  sections: [
+    { heading: "Data Breaches", body: `A data breach occurs when unauthorized parties gain access to sensitive data.<ul class='content-list'><li>🎯 Causes: Weak credentials, misconfigured storage, SQL injection, insider threats</li><li>💥 Impact: Financial loss, regulatory fines, reputational damage</li><li>🛡 Prevention: Encryption, strong access controls, regular security audits, DLP tools</li><li>📌 Notable: Capital One breach (2019) — 100M+ records exposed via misconfigured WAF</li></ul>` },
+    { heading: "Misconfigurations", body: `The #1 cause of cloud security incidents. Misconfigured cloud resources leave data exposed.<ul class='content-list'><li>☁ Public S3 buckets — storage open to the internet accidentally</li><li>🔓 Open security groups — allowing unrestricted access to servers</li><li>👑 Overly permissive IAM — users with more access than needed</li><li>🔑 Hardcoded credentials in code repositories</li></ul><strong>Prevention:</strong> Use cloud security posture management (CSPM) tools, infrastructure as code reviews, automated compliance checks.` },
+    { heading: "DDoS Attacks", body: `Distributed Denial of Service attacks flood cloud services with traffic, making them unavailable.<ul class='content-list'><li>📊 Types: Volumetric (bandwidth exhaustion), Protocol (SYN flood), Application layer (HTTP flood)</li><li>☁ Cloud advantage: Easier to scale resources to absorb attacks</li><li>🛡 Defense: AWS Shield, Cloudflare, Azure DDoS Protection, load balancing, auto-scaling</li></ul>` },
+    { heading: "Insider Threats", body: `Threats from employees, contractors, or partners with authorized access who misuse it.<ul class='content-list'><li>😈 Malicious insiders: Deliberately stealing or damaging data</li><li>😰 Negligent insiders: Accidental data exposure through careless behavior</li><li>🛡 Prevention: Principle of least privilege, user behavior analytics (UBA), separation of duties, off-boarding procedures</li></ul>` },
+    { heading: "Account Hijacking", body: `Attackers gain control of cloud accounts through stolen credentials.<ul class='content-list'><li>🎣 Phishing — trick users into revealing credentials</li><li>🔑 Credential stuffing — use breached passwords from other services</li><li>🎭 Social engineering — manipulate users to gain access</li><li>🛡 Prevention: MFA for all accounts, security awareness training, privileged access management (PAM)</li></ul>` },
+    { heading: "Supply Chain Attacks", body: `Attacks targeting third-party software and services used in cloud environments.<ul class='content-list'><li>📌 SolarWinds attack (2020) — compromised software update affected 18,000+ organizations</li><li>📦 Malicious packages in npm, PyPI repositories</li><li>🛡 Prevention: Software Bill of Materials (SBOM), dependency scanning, zero-trust for third-party access</li></ul>` }
+  ]
+},
+"cloud-security-tools": {
+  title: "Cloud Security Tools",
+  icon: "🔧",
+  color: "#006064",
+  intro: "A comprehensive cloud security strategy requires the right tools. Here are the essential categories and tools used by cloud security professionals.",
+  sections: [
+    { heading: "Cloud Security Posture Management (CSPM)", body: `CSPM tools continuously monitor cloud configurations for security risks and compliance violations.<ul class='content-list'><li>🔧 <strong>Prowler:</strong> Open-source AWS security tool — checks hundreds of controls</li><li>🔧 <strong>AWS Security Hub:</strong> Centralized cloud security findings</li><li>🔧 <strong>Prisma Cloud (Palo Alto):</strong> Enterprise CSPM across multi-cloud</li><li>🔧 <strong>Lacework:</strong> Anomaly detection and compliance</li></ul>` },
+    { heading: "SIEM (Security Information & Event Management)", body: `SIEM tools collect, analyze, and correlate security events from across your cloud environment.<ul class='content-list'><li>🔧 <strong>AWS Security Hub + CloudWatch:</strong> Native AWS security monitoring</li><li>🔧 <strong>Microsoft Sentinel:</strong> Cloud-native SIEM on Azure</li><li>🔧 <strong>Splunk:</strong> Industry-leading log management and SIEM</li><li>🔧 <strong>Elastic SIEM:</strong> Open-source security analytics</li><li>🔧 <strong>Google Chronicle:</strong> Google's planet-scale SIEM</li></ul>` },
+    { heading: "Identity & Access Management Tools", body: `<ul class='content-list'><li>🔧 <strong>AWS IAM:</strong> Native AWS identity management</li><li>🔧 <strong>Azure Active Directory:</strong> Microsoft's cloud identity platform</li><li>🔧 <strong>Okta:</strong> Enterprise identity and SSO platform</li><li>🔧 <strong>HashiCorp Vault:</strong> Secrets management and dynamic credentials</li><li>🔧 <strong>CyberArk:</strong> Privileged Access Management (PAM)</li></ul>` },
+    { heading: "Network Security Tools", body: `<ul class='content-list'><li>🔧 <strong>Cloudflare:</strong> DDoS protection, WAF, Zero Trust Network Access</li><li>🔧 <strong>AWS WAF:</strong> Web Application Firewall for AWS resources</li><li>🔧 <strong>Zscaler:</strong> Zero Trust network security, SWG, CASB</li><li>🔧 <strong>Palo Alto Prisma Access:</strong> Cloud-delivered network security</li><li>🔧 <strong>AWS Network Firewall:</strong> Managed firewall service</li></ul>` },
+    { heading: "Vulnerability Management & Scanning", body: `<ul class='content-list'><li>🔧 <strong>AWS Inspector:</strong> Automated vulnerability assessment for EC2 and containers</li><li>🔧 <strong>Tenable Nessus:</strong> Industry-standard vulnerability scanner</li><li>🔧 <strong>Qualys:</strong> Cloud-based vulnerability management platform</li><li>🔧 <strong>Trivy:</strong> Open-source container and IaC security scanner</li><li>🔧 <strong>Snyk:</strong> Developer-first security — scans code, containers, IaC</li></ul>` },
+    { heading: "Infrastructure as Code Security", body: `<ul class='content-list'><li>🔧 <strong>Terraform + tfsec:</strong> Scan Terraform code for security issues</li><li>🔧 <strong>Checkov:</strong> Static analysis for Terraform, CloudFormation, Kubernetes</li><li>🔧 <strong>AWS CloudFormation Guard:</strong> Policy-as-code for CloudFormation</li><li>🔧 <strong>OPA (Open Policy Agent):</strong> Policy engine for cloud-native environments</li></ul>` }
+  ]
+},
+"cloud-security-compliance": {
+  title: "Compliance & Standards",
+  icon: "📜",
+  color: "#4A148C",
+  intro: "Cloud security compliance involves adhering to regulations, standards, and frameworks that govern how organizations protect data and manage cloud security risks.",
+  sections: [
+    { heading: "GDPR (General Data Protection Regulation)", body: `EU regulation protecting personal data of EU citizens, regardless of where the company is located.<ul class='content-list'><li>📍 Applies to: Any organization handling EU citizen data</li><li>🔑 Key requirements: Data minimization, right to erasure, breach notification within 72 hours</li><li>💰 Penalties: Up to €20 million or 4% of global annual turnover</li><li>☁ Cloud implications: Data residency, processor agreements, privacy by design</li></ul>` },
+    { heading: "SOC 2 (Service Organization Control)", body: `AICPA framework for service organizations to demonstrate security controls over customer data.<ul class='content-list'><li>📋 Type I: Point-in-time assessment of control design</li><li>📋 Type II: Assessment over 6-12 months (more rigorous)</li><li>🔑 Trust Service Criteria: Security, Availability, Processing Integrity, Confidentiality, Privacy</li><li>🎯 Required by: SaaS companies, cloud service providers, managed service providers</li></ul>` },
+    { heading: "PCI DSS (Payment Card Industry Data Security Standard)", body: `Standard for organizations that handle payment card data.<ul class='content-list'><li>📍 Applies to: Any organization that stores, processes, or transmits cardholder data</li><li>🔑 12 requirements including: Firewall, encryption, access control, monitoring, testing</li><li>📊 Compliance levels based on transaction volume</li><li>☁ Cloud shared responsibility: Understand which PCI DSS controls your provider covers</li></ul>` },
+    { heading: "ISO/IEC 27001", body: `International standard for Information Security Management Systems (ISMS).<ul class='content-list'><li>🌍 Globally recognized security management certification</li><li>📋 114 controls across 14 domains including cryptography, access control, incident management</li><li>✅ Shows commitment to security best practices</li><li>🔄 Requires regular audits and continuous improvement</li></ul>` },
+    { heading: "HIPAA (Health Insurance Portability and Accountability Act)", body: `US regulation protecting health information.<ul class='content-list'><li>📍 Applies to: Healthcare providers, health plans, healthcare clearinghouses, and their business associates</li><li>🔑 Protects: Protected Health Information (PHI)</li><li>☁ Cloud: Must sign Business Associate Agreements (BAA) with cloud providers</li><li>📌 AWS, Azure, and GCP all offer HIPAA-eligible services with BAA</li></ul>` },
+    { heading: "Cloud Security Frameworks", body: `<ul class='content-list'><li>📋 <strong>CSA Cloud Controls Matrix (CCM):</strong> Cloud-specific security controls framework</li><li>📋 <strong>NIST Cybersecurity Framework:</strong> Identify, Protect, Detect, Respond, Recover</li><li>📋 <strong>CIS Benchmarks:</strong> Security configuration guidelines for cloud services</li><li>📋 <strong>AWS Well-Architected Security Pillar:</strong> AWS best practices for security</li></ul>` }
+  ]
+},
+"cloud-networking": {
+  title: "Cloud Networking",
+  icon: "🌐",
+  color: "#01579B",
+  intro: "Cloud networking provides the connectivity infrastructure that allows cloud resources to communicate with each other, with users, and with the internet securely.",
+  sections: [
+    { heading: "Virtual Private Cloud (VPC)", body: `A VPC is your own private, isolated section of the cloud where you control the network environment.<ul class='content-list'><li>🔧 Define your own IP address ranges (CIDR blocks)</li><li>🔧 Create subnets — public (internet-facing) and private (internal only)</li><li>🔧 Control traffic with security groups (instance-level) and NACLs (subnet-level)</li><li>🔧 Connect to on-premises: VPN or Direct Connect/ExpressRoute</li></ul>` },
+    { heading: "Security Groups & NACLs", body: `<ul class='content-list'><li><strong>Security Groups:</strong> Virtual firewalls for EC2 instances. Stateful — return traffic is automatically allowed. Define inbound and outbound rules.</li><li><strong>Network Access Control Lists (NACLs):</strong> Subnet-level firewall. Stateless — must explicitly allow both inbound and outbound. Rules evaluated in number order.</li></ul>Best practice: Use security groups as primary control, NACLs as additional defense layer.` },
+    { heading: "Load Balancing", body: `Distributes incoming traffic across multiple servers for availability and performance.<ul class='content-list'><li>⚖️ <strong>Application Load Balancer (ALB):</strong> HTTP/HTTPS traffic, path-based routing</li><li>⚖️ <strong>Network Load Balancer (NLB):</strong> TCP/UDP, ultra-high performance</li><li>⚖️ <strong>Global Load Balancing:</strong> Distribute across geographic regions</li></ul>` },
+    { heading: "CDN & Edge Networking", body: `Content Delivery Networks cache content closer to users for faster delivery.<ul class='content-list'><li>🌍 <strong>AWS CloudFront:</strong> Global CDN with 400+ edge locations</li><li>🌍 <strong>Cloudflare:</strong> CDN + DDoS protection + security</li><li>🌍 <strong>Azure CDN / Google Cloud CDN</strong></li></ul>Benefits: Lower latency, reduced origin server load, DDoS mitigation.` },
+    { heading: "DNS & Traffic Management", body: `<ul class='content-list'><li>🔧 <strong>AWS Route 53:</strong> Scalable DNS with health checking and traffic routing policies</li><li>🔧 <strong>Azure DNS / Google Cloud DNS</strong></li><li>🎯 Routing policies: Simple, weighted, latency-based, failover, geolocation</li></ul>` }
+  ]
+},
+"cloud-storage": {
+  title: "Cloud Storage",
+  icon: "💾",
+  color: "#1565C0",
+  intro: "Cloud storage provides scalable, durable, and accessible data storage. Understanding the different types is crucial for designing secure and efficient cloud systems.",
+  sections: [
+    { heading: "Object Storage", body: `Object storage stores data as objects (files) with metadata and a unique identifier.<ul class='content-list'><li>📦 <strong>AWS S3, Azure Blob Storage, Google Cloud Storage</strong></li><li>✅ Best for: Images, videos, backups, static website files, data lakes</li><li>♾️ Virtually unlimited capacity, 99.999999999% (11 nines) durability</li><li>🔐 Security: Bucket policies, ACLs, encryption, versioning, MFA delete</li></ul>` },
+    { heading: "Block Storage", body: `Block storage presents raw storage volumes that can be attached to compute instances.<ul class='content-list'><li>💽 <strong>AWS EBS, Azure Managed Disks, Google Persistent Disk</strong></li><li>✅ Best for: Databases, operating systems, applications requiring low latency</li><li>⚡ High performance, low latency I/O</li><li>🔐 Security: Encryption at rest, snapshot backups, access control</li></ul>` },
+    { heading: "File Storage", body: `Shared file system that multiple compute instances can access simultaneously.<ul class='content-list'><li>📁 <strong>AWS EFS, Azure Files, Google Filestore</strong></li><li>✅ Best for: Content management, web serving, shared home directories</li><li>🔗 NFS (Network File System) protocol</li></ul>` },
+    { heading: "Storage Security Best Practices", body: `<ul class='content-list'><li>🔒 Encrypt all data at rest (AES-256)</li><li>🔒 Encrypt data in transit (TLS)</li><li>🚫 Never make storage buckets publicly accessible unless required</li><li>👁 Enable access logging and monitoring</li><li>⏱ Enable versioning to protect against accidental deletion</li><li>🔑 Use customer-managed keys (CMK) for sensitive data</li><li>🔍 Regular audits with tools like S3 Bucket Finder, Prowler</li></ul>` },
+    { heading: "Storage Classes & Cost Optimization", body: `<ul class='content-list'><li>🔥 <strong>Standard:</strong> Frequently accessed data — highest cost</li><li>☁ <strong>Infrequent Access:</strong> Data accessed monthly — lower cost</li><li>❄️ <strong>Glacier / Archive:</strong> Rarely accessed, long-term retention — lowest cost</li></ul>Lifecycle policies automatically move data to cheaper storage tiers based on age.` }
+  ]
+},
+"cloud-devops": {
+  title: "Cloud & DevOps",
+  icon: "⚙️",
+  color: "#004D40",
+  intro: "DevOps practices combined with cloud computing create powerful, automated, and secure software delivery pipelines. DevSecOps extends this by embedding security throughout.",
+  sections: [
+    { heading: "CI/CD Pipelines", body: `Continuous Integration and Continuous Delivery automate the process of building, testing, and deploying applications.<ul class='content-list'><li>🔄 <strong>CI (Continuous Integration):</strong> Automatically build and test code on every commit</li><li>🚀 <strong>CD (Continuous Delivery):</strong> Automatically deploy to staging/production</li><li>🔧 Tools: GitHub Actions, AWS CodePipeline, Azure DevOps, Jenkins, GitLab CI</li><li>🛡 DevSecOps: Security scans integrated into the pipeline — SAST, DAST, dependency scanning</li></ul>` },
+    { heading: "Infrastructure as Code (IaC)", body: `Managing and provisioning cloud infrastructure through code files instead of manual processes.<ul class='content-list'><li>🔧 <strong>Terraform:</strong> Multi-cloud IaC, declarative, most popular</li><li>🔧 <strong>AWS CloudFormation:</strong> AWS-native IaC in JSON/YAML</li><li>🔧 <strong>Azure Bicep / ARM Templates:</strong> Azure IaC</li><li>🔧 <strong>Pulumi:</strong> IaC using real programming languages (Python, TypeScript)</li></ul>Security benefit: Infrastructure code can be reviewed, version-controlled, and scanned for misconfigurations before deployment.` },
+    { heading: "Containers & Kubernetes", body: `<ul class='content-list'><li>🐳 <strong>Docker:</strong> Package applications and dependencies into portable containers</li><li>☸️ <strong>Kubernetes (K8s):</strong> Orchestrate containers across clusters — auto-scaling, self-healing, rolling updates</li><li>☁ <strong>Managed Kubernetes:</strong> AWS EKS, Azure AKS, Google GKE</li></ul>Security considerations: Container image scanning, network policies, RBAC, secrets management, pod security policies.` },
+    { heading: "Monitoring & Observability", body: `<ul class='content-list'><li>📊 <strong>AWS CloudWatch:</strong> Metrics, logs, alarms for AWS resources</li><li>📊 <strong>Prometheus + Grafana:</strong> Open-source monitoring stack</li><li>📊 <strong>Datadog:</strong> Full-stack monitoring platform</li><li>📊 <strong>ELK Stack:</strong> Elasticsearch, Logstash, Kibana — log management</li></ul>The three pillars of observability: Metrics (what's happening), Logs (why it happened), Traces (where it happened).` },
+    { heading: "GitOps & Platform Engineering", body: `<ul class='content-list'><li>🔄 <strong>GitOps:</strong> Git as the single source of truth for infrastructure and application state</li><li>🔧 <strong>ArgoCD / Flux:</strong> GitOps tools for Kubernetes</li><li>🏗 <strong>Platform Engineering:</strong> Building internal developer platforms (IDPs) to streamline cloud operations</li></ul>` }
+  ]
+},
+"cloud-career": {
+  title: "Cloud Career Roadmap",
+  icon: "🎯",
+  color: "#1A237E",
+  intro: "Cloud and cloud security careers are among the most lucrative and in-demand in tech. Here's your complete roadmap from beginner to cloud security expert.",
+  sections: [
+    { heading: "Step 1: Cloud Foundations (Month 1–3)", body: `<ul class='content-list'><li>📚 Learn cloud basics (what you're doing right now!)</li><li>🎓 <strong>AWS Cloud Practitioner (CLF-C02)</strong> — best first certification</li><li>🎓 Or: <strong>Google Cloud Digital Leader</strong> / <strong>Azure Fundamentals (AZ-900)</strong></li><li>🔧 Hands-on: Create a free AWS/Azure/GCP account and explore the console</li><li>📖 Resources: AWS Skill Builder, Microsoft Learn, Google Cloud Skills Boost</li></ul>` },
+    { heading: "Step 2: Core Cloud Skills (Month 3–6)", body: `<ul class='content-list'><li>🏗 Learn networking (VPC, subnets, security groups)</li><li>💾 Learn storage services (S3, EBS, databases)</li><li>⚙️ Learn IaC basics (Terraform, CloudFormation)</li><li>🎓 <strong>AWS Solutions Architect Associate (SAA-C03)</strong></li><li>🔧 Build projects: Deploy a web app, set up a CI/CD pipeline, create a VPC</li></ul>` },
+    { heading: "Step 3: Security Fundamentals (Month 6–12)", body: `<ul class='content-list'><li>🛡 Study CompTIA Security+ (general security foundation)</li><li>🎓 <strong>AWS Security Specialty</strong> or <strong>Azure Security Engineer (AZ-500)</strong></li><li>🔍 Learn IAM, encryption, logging, monitoring</li><li>🔧 Practice: Set up CloudTrail, implement MFA, configure WAF, run Prowler</li><li>📚 Study: OWASP Top 10, NIST frameworks, cloud attack techniques</li></ul>` },
+    { heading: "Step 4: Advanced Security Skills (Year 1–2)", body: `<ul class='content-list'><li>🎯 Penetration testing: Learn cloud attack techniques (TryHackMe, HackTheBox)</li><li>🎓 CCSP (Certified Cloud Security Professional) — premium cert</li><li>🎓 OSCP for those interested in offensive security</li><li>🔧 Build a cloud security lab, practice incident response</li><li>📊 Learn SIEM tools: Splunk, Microsoft Sentinel</li></ul>` },
+    { heading: "Cloud Security Career Paths", body: `<div class='career-grid'><div class='career-card'><div class='career-icon'>🛡</div><strong>Cloud Security Engineer</strong><p>Design and implement security controls. Avg salary: $130k–$160k</p></div><div class='career-card'><div class='career-icon'>☁</div><strong>Cloud Architect</strong><p>Design cloud infrastructure at scale. Avg salary: $140k–$200k</p></div><div class='career-card'><div class='career-icon'>🔍</div><strong>Cloud Penetration Tester</strong><p>Find vulnerabilities before attackers. Avg salary: $120k–$180k</p></div><div class='career-card'><div class='career-icon'>📋</div><strong>Cloud Compliance Analyst</strong><p>Ensure regulatory compliance. Avg salary: $100k–$140k</p></div><div class='career-card'><div class='career-icon'>🚨</div><strong>Security Operations (SOC)</strong><p>Monitor and respond to threats. Avg salary: $90k–$130k</p></div><div class='career-card'><div class='career-icon'>🔧</div><strong>DevSecOps Engineer</strong><p>Security in software pipelines. Avg salary: $130k–$170k</p></div></div>` },
+    { heading: "Key Resources & Communities", body: `<ul class='content-list'><li>🌐 <strong>TryHackMe:</strong> Gamified cybersecurity and cloud labs</li><li>🌐 <strong>HackTheBox:</strong> Advanced penetration testing challenges</li><li>🌐 <strong>CloudGoat (Rhino Security):</strong> Intentionally vulnerable AWS environment for practice</li><li>🌐 <strong>A Cloud Guru / Pluralsight:</strong> Cloud course platforms</li><li>📖 <strong>Cloud Security Alliance (CSA):</strong> Best practices and research</li><li>💬 <strong>r/netsec, r/aws, r/azure:</strong> Community discussions</li><li>🎙 <strong>Podcasts:</strong> Darknet Diaries, Cloud Security Podcast, SANS StormCast</li></ul>` }
+  ]
+}
+};
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/topic.js"></script>
+{% endblock %}

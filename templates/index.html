@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">☁ Zero to Hero</div>
+    <h1>Master <span class="gradient-text">Cloud Security</span></h1>
+    <p class="hero-sub">A complete roadmap from cloud basics to becoming a Cloud Security Hero. Learn, practice, and track your progress with interactive quizzes.</p>
+    <div class="hero-actions">
+      <a href="/topic/what-is-cloud" class="btn-primary">Start Learning →</a>
+      <a href="#roadmap" class="btn-ghost">View Roadmap</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">14</span><span class="stat-label">Topics</span></div>
+      <div class="stat"><span class="stat-num">70+</span><span class="stat-label">Quiz Questions</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Free</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="cloud-orb">
+      <div class="orb-ring r1"></div>
+      <div class="orb-ring r2"></div>
+      <div class="orb-ring r3"></div>
+      <div class="orb-core">☁</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRESS DASHBOARD -->
+<section class="dashboard" id="dashboard">
+  <div class="container">
+    <h2>Your Learning Dashboard</h2>
+    <div class="dash-grid">
+      <div class="dash-card main-progress">
+        <div class="progress-label">Overall Progress</div>
+        <div class="big-progress-ring">
+          <svg viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="50"/>
+            <circle class="ring-fill" cx="60" cy="60" r="50" id="ring-fill"/>
+          </svg>
+          <div class="ring-text">
+            <span class="ring-pct" id="ring-pct">0%</span>
+            <span class="ring-lbl">Complete</span>
+          </div>
+        </div>
+        <div class="progress-meta">
+          <span id="dash-completed">0</span> of <span id="dash-total">14</span> topics
+        </div>
+        <button class="btn-reset" onclick="resetProgress()">↺ Reset Progress</button>
+      </div>
+      <div class="dash-card topic-list-card">
+        <h3>Topic Progress</h3>
+        <div id="topic-progress-list" class="topic-progress-list">
+          <!-- filled by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap" id="roadmap">
+  <div class="container">
+    <h2>Learning Roadmap</h2>
+    <p class="section-sub">Follow this structured path to go from cloud zero to security hero</p>
+    <div class="roadmap-grid" id="roadmap-grid">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- WHY CLOUD SECURITY -->
+<section class="why-section">
+  <div class="container">
+    <h2>Why Cloud Security?</h2>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🔐</div>
+        <h3>High Demand</h3>
+        <p>Cloud security professionals are among the highest-paid in tech, with demand growing 3x faster than supply.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🌐</div>
+        <h3>Global Relevance</h3>
+        <p>Every organization moving to cloud needs security expertise. Your skills will be relevant worldwide.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💰</div>
+        <h3>Lucrative Salaries</h3>
+        <p>Average cloud security engineer salary exceeds $130,000/year in the US, with senior roles reaching $200k+.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🚀</div>
+        <h3>Future-Proof</h3>
+        <p>As cloud adoption grows exponentially, cloud security skills will only become more essential and valuable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/home.js"></script>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CloudHero — Learn Cloud Security</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+<nav class="navbar">
+  <a class="logo" href="/">☁ CloudHero</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/topic/what-is-cloud">Learn</a>
+    <a href="/topic/cloud-security">Security</a>
+    <a href="/topic/cloud-career">Career</a>
+  </div>
+  <div class="progress-pill" id="nav-progress">
+    <span class="pill-label">Progress</span>
+    <span class="pill-val" id="nav-pct">0%</span>
+  </div>
+</nav>
+{% block content %}{% endblock %}
+<footer>
+  <p>☁ CloudHero · Your journey from Zero to Cloud Security Hero starts here.</p>
+</footer>
+<script src="/static/js/main.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>
